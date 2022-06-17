@@ -1,0 +1,27 @@
+name: flutter_cast_video
+description: flutter_cast_video let you discover cast devices like Chrome Cast and Apple TV and connect to them.
+version: 1.0.3
+homepage: https://github.com/whowillcare/flutter_cast_video
+
+environment:
+  sdk: '>=2.12.0-259.9.beta <3.0.0'
+  flutter: ">=1.20.0 <2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  stream_transform: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: it.aesys.flutter_cast_video
+        pluginClass: FlutterVideoCastPlugin
+      ios:
+        pluginClass: FlutterVideoCastPlugin
