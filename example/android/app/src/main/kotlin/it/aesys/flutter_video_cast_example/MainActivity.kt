@@ -1,4 +1,4 @@
-package it.aesys.flutter_video_cast_example
+package it.aesys.flutter_cast_video_example
 
 import com.google.android.gms.cast.framework.CastContext
 import io.flutter.embedding.android.FlutterFragmentActivity

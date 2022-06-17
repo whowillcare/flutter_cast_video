@@ -1,4 +1,4 @@
-package it.aesys.flutter_video_cast
+package it.aesys.flutter_cast_video
 
 import android.content.Context
 import android.util.Log
@@ -30,7 +30,7 @@ class ChromeCastController(
         viewId: Int,
         context: Context?
 ) : PlatformView, MethodChannel.MethodCallHandler, SessionManagerListener<Session>, PendingResult.StatusListener {
-    private val channel = MethodChannel(messenger, "flutter_video_cast/chromeCast_$viewId")
+    private val channel = MethodChannel(messenger, "flutter_cast_video/chromeCast_$viewId")
     private val chromeCastButton = MediaRouteButton(ContextThemeWrapper(context, R.style.Theme_AppCompat_NoActionBar))
     private val sessionManager = CastContext.getSharedInstance()?.sessionManager
 

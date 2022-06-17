@@ -62,18 +62,18 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_test:
-    dependency: "direct dev"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  flutter_video_cast:
+  flutter_cast_video:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
     version: "1.0.3"
+  flutter_test:
+    dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   matcher:
     dependency: transitive
     description:

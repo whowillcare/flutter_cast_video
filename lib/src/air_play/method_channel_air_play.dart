@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_video_cast/src/air_play/air_play_event.dart';
-import 'package:flutter_video_cast/src/air_play/air_play_platform.dart';
+import 'package:flutter_cast_video/src/air_play/air_play_event.dart';
+import 'package:flutter_cast_video/src/air_play/air_play_platform.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 /// An implementation of [AirPlayPlatform] that uses [MethodChannel] to communicate with the native code.
@@ -33,7 +33,7 @@ class MethodChannelAirPlay extends AirPlayPlatform {
   Future<void> init(int id) {
     MethodChannel? channel;
     if (!_channels.containsKey(id)) {
-      channel = MethodChannel('flutter_video_cast/airPlay_$id');
+      channel = MethodChannel('flutter_cast_video/airPlay_$id');
       channel.setMethodCallHandler((call) => _handleMethodCall(call, id));
       _channels[id] = channel;
     }

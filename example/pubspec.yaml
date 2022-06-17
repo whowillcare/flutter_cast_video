@@ -1,5 +1,5 @@
-name: flutter_video_cast_example
-description: Demonstrates how to use the flutter_video_cast plugin.
+name: flutter_cast_video_example
+description: Demonstrates how to use the flutter_cast_video plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
@@ -9,7 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_video_cast:
+  flutter_cast_video:
     path: ../
 
   cupertino_icons: ^0.1.3

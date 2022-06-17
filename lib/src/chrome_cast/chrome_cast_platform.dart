@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_video_cast/src/chrome_cast/chrome_cast_event.dart';
-import 'package:flutter_video_cast/src/chrome_cast/method_channel_chrome_cast.dart';
+import 'package:flutter_cast_video/src/chrome_cast/chrome_cast_event.dart';
+import 'package:flutter_cast_video/src/chrome_cast/method_channel_chrome_cast.dart';
 
-/// The interface that platform-specific implementations of `flutter_video_cast` must extend.
+/// The interface that platform-specific implementations of `flutter_cast_video` must extend.
 abstract class ChromeCastPlatform {
   static ChromeCastPlatform _instance = MethodChannelChromeCast();
 

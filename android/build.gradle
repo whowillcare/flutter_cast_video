@@ -1,4 +1,4 @@
-group 'it.aesys.flutter_video_cast'
+group 'it.aesys.flutter_cast_video'
 version '1.2-ENABLEMEDIA'
 
 buildscript {

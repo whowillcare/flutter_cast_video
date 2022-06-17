@@ -1,4 +1,4 @@
-package it.aesys.flutter_video_cast
+package it.aesys.flutter_cast_video
 
 import android.app.Activity
 import android.content.Context

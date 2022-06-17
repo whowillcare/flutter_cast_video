@@ -1,6 +1,6 @@
 //
 //  ChromeCastController.swift
-//  flutter_video_cast
+//  flutter_cast_video
 //
 //  Created by Alessio Valentini on 07/08/2020.
 //
@@ -24,7 +24,7 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         arguments args: Any?,
         registrar: FlutterPluginRegistrar
     ) {
-        self.channel = FlutterMethodChannel(name: "flutter_video_cast/chromeCast_\(viewId)", binaryMessenger: registrar.messenger())
+        self.channel = FlutterMethodChannel(name: "flutter_cast_video/chromeCast_\(viewId)", binaryMessenger: registrar.messenger())
         self.chromeCastButton = GCKUICastButton(frame: frame)
         super.init()
         self.configure(arguments: args)

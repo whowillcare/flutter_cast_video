@@ -1,4 +1,4 @@
-part of flutter_video_cast;
+part of flutter_cast_video;
 
 final ChromeCastPlatform _chromeCastPlatform = ChromeCastPlatform.instance;
 

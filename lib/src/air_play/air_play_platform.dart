@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_video_cast/src/air_play/air_play_event.dart';
-import 'package:flutter_video_cast/src/air_play/method_channel_air_play.dart';
+import 'package:flutter_cast_video/src/air_play/air_play_event.dart';
+import 'package:flutter_cast_video/src/air_play/method_channel_air_play.dart';
 
-/// The interface that platform-specific implementations of `flutter_video_cast` must extend.
+/// The interface that platform-specific implementations of `flutter_cast_video` must extend.
 abstract class AirPlayPlatform {
   static AirPlayPlatform _instance = MethodChannelAirPlay();
 

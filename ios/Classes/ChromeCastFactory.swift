@@ -1,6 +1,6 @@
 //
 //  ChromeCastFactory.swift
-//  flutter_video_cast
+//  flutter_cast_video
 //
 //  Created by Alessio Valentini on 07/08/2020.
 //

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_video_cast/src/chrome_cast/chrome_cast_event.dart';
-import 'package:flutter_video_cast/src/chrome_cast/chrome_cast_platform.dart';
+import 'package:flutter_cast_video/src/chrome_cast/chrome_cast_event.dart';
+import 'package:flutter_cast_video/src/chrome_cast/chrome_cast_platform.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 /// An implementation of [ChromeCastPlatform] that uses [MethodChannel] to communicate with the native code.
@@ -33,7 +33,7 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
   Future<void> init(int id) {
     MethodChannel? channel;
     if (!_channels.containsKey(id)) {
-      channel = MethodChannel('flutter_video_cast/chromeCast_$id');
+      channel = MethodChannel('flutter_cast_video/chromeCast_$id');
       channel.setMethodCallHandler((call) => _handleMethodCall(call, id));
       _channels[id] = channel;
     }

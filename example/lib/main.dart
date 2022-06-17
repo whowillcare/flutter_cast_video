@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_cast/flutter_video_cast.dart';
+import 'package:flutter_cast_video/flutter_cast_video.dart';
 
 void main() {
   runApp(MyApp());

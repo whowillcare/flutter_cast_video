@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "it.aesys.flutter_video_cast_example"
+        applicationId "it.aesys.flutter_cast_video_example"
         minSdkVersion 25
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
