@@ -113,39 +113,40 @@ class ChromeCastController: NSObject, FlutterPlatformView {
     }
 
     private func loadMedia(args: Any?) {
-//        guard
-//            let args = args as? [String: Any],
-//            let url = args["url"] as? String,
-//            let mediaUrl = URL(string: url) else {
-//                print("Invalid URL")
-//                return
-//        }
-//        let mediaInformation = GCKMediaInformationBuilder(contentURL: mediaUrl).build()
-//        if let request = sessionManager.currentCastSession?.remoteMediaClient?.loadMedia(mediaInformation) {
-//            request.delegate = self
-//        }
          guard
              let args = args as? [String: Any],
              let url = args["url"] as? String,
-             let title = args["title"] as? String,
-             let subtitle = args["subtitle"] as? String,
-             let image = args["image"] as? String,
-             let imageUrl = URL(string: image),
-             let live = args["live"] as? Bool,
              let mediaUrl = URL(string: url) else {
                  print("Invalid URL")
                  return
          }
+         
+             let _title = args["title"] as? String
+             let _subtitle = args["subtitle"] as? String
+             let _image = args["image"] as? String
+             let live = args["live"] as? Bool
 
          let movieMetadata = GCKMediaMetadata()
 
+         if let title = _title { 
          movieMetadata.setString(title, forKey: kGCKMetadataKeyTitle)
-         movieMetadata.setString(subtitle, forKey: kGCKMetadataKeySubtitle)
-         movieMetadata.addImage(GCKImage(url: imageUrl, width: 480, height: 360))
-         //movieMetadata.addImage(GCKImage(url: imageUrl, width: 480, height: 360))
+         }
+         if let subtitle = _subtitle {
+           movieMetadata.setString(subtitle, forKey: kGCKMetadataKeySubtitle)
+         }
+         if let image = _image {
+          if let imageUrl = URL(string: image){
+           movieMetadata.addImage(GCKImage(url: imageUrl, width: 480, height: 360))
+          }
+         }
 
          let mediaInfoBuilder = GCKMediaInformationBuilder.init(contentURL: mediaUrl)
-         mediaInfoBuilder.streamType = live != null && live! ? .live : .buffered;
+         mediaInfoBuilder.streamType = .buffered
+         if let islive = live {
+          if islive {
+            mediaInfoBuilder.streamType = .live
+          }
+         }
          mediaInfoBuilder.contentType = "video/mp4"
          mediaInfoBuilder.metadata = movieMetadata;
          let mediaInformation = mediaInfoBuilder.build()
@@ -239,14 +240,14 @@ extension ChromeCastController: GCKRequestDelegate {
 extension ChromeCastController : GCKRemoteMediaClientListener {
     func remoteMediaClient(_ client: GCKRemoteMediaClient, didUpdate mediaStatus: GCKMediaStatus?) {
         let playerStatus: GCKMediaPlayerState = mediaStatus?.playerState ?? GCKMediaPlayerState.unknown
-        let retCode = 4;
+        var retCode = 4;
         if (playerStatus == GCKMediaPlayerState.playing) {
             retCode = 1
         } else if (playerStatus == GCKMediaPlayerState.buffering) {
             retCode = 0
         } else if (playerStatus == GCKMediaPlayerState.idle && mediaStatus?.idleReason == GCKMediaPlayerIdleReason.finished) {
             retCode = 2
-        }else if (playerStatus == GCKMediaPlayerState.pause) {
+        }else if (playerStatus == GCKMediaPlayerState.paused) {
           retCode = 3;
         }
         channel.invokeMethod("chromeCast#didPlayerStatusUpdated", arguments: retCode)
