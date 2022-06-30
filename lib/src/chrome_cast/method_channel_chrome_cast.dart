@@ -113,6 +113,11 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
   }
 
   @override
+  Future<Map<dynamic,dynamic>?> getMediaInfo({required int id}) async {
+    return (await channel(id)!.invokeMethod<Map<dynamic,dynamic>?>('chromeCast#getMediaInfo'));
+  }
+
+  @override
   Future<double> getVolume({required int id}) async {
     return (await channel(id)!.invokeMethod<double>('chromeCast#getVolume')) ??
         0;

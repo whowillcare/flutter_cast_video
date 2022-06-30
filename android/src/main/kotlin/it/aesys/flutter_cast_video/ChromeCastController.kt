@@ -17,6 +17,7 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.common.images.WebImage
 import io.flutter.plugin.common.BinaryMessenger
@@ -65,6 +66,7 @@ class ChromeCastController(
                        .build()
             val options = MediaLoadOptions.Builder().build()
             val request = sessionManager?.currentCastSession?.remoteMediaClient?.load(media, options)
+
             request?.addStatusListener(this)
         }
     }
@@ -79,6 +81,36 @@ class ChromeCastController(
         request?.addStatusListener(this)
     }
 
+    /*private fun mediaQueue(args: Any?) : List<HashMap<String,String>>{
+       val items : List<HashMap<String,String>> = mutableListOf()
+        val client = sessionManager?.currentCastSession?.remoteMediaClient ?: return items
+       val queue = client.getMediaQueue()
+       val status = client.mediaStatus
+       val qlen = queue.getItemCount()
+
+       var start = 0
+       var batch = 5
+       var page = 1;
+       if (args is Map<*, *>) {
+           batch = (args["batch"] as? Int) ?: batch
+           page = (args["page"] as? Int) ?: page
+       }
+        start = page * batch
+        var end = (page+1) * batch
+        if (start >= qlen){
+            return items
+        }
+        if (end > qlen){
+            end = qlen
+        }
+        batch = end - start
+
+        var ret = queue.fetchMoreItemsRelativeToIndex(start, batch, 0)
+        ret.setResultCallback {
+
+        }
+    }
+     */
     private fun seek(args: Any?) {
         if (args is Map<*, *>) {
             val relative = (args["relative"] as? Boolean) ?: false
@@ -91,6 +123,28 @@ class ChromeCastController(
             request?.addStatusListener(this)
         }
     }
+
+    private fun mediaInfoToMap(mediaInfo: MediaInfo?) : HashMap<String,String>? {
+        var info = HashMap<String, String>()
+        mediaInfo?.let {
+            info["id"] = mediaInfo.getContentId() ?: ""
+                info["url"] = mediaInfo.getContentUrl() ?: ""
+            info["contentType"] = mediaInfo.getContentType()  ?: ""
+            // info["customData"] = mediaInfo.getCustomData().toString() ?: ""
+            var meta = mediaInfo.getMetadata()
+            meta?.let {
+                info["title"] = meta.getString(MediaMetadata.KEY_TITLE) ?: ""
+                info["subtitle"] = meta.getString(MediaMetadata.KEY_SUBTITLE) ?: ""
+                val imgs = meta.getImages()
+                if (imgs.size > 0){
+                    info["image"] = imgs[0].getUrl().toString();
+                }
+            }
+        }
+        return info;
+    }
+    private fun getMediaInfo() : HashMap<String,String>? =  mediaInfoToMap(sessionManager?.currentCastSession?.remoteMediaClient?.getMediaInfo())
+
 
     private fun setVolume(args: Any?) {
         if (args is Map<*, *>) {
@@ -139,7 +193,7 @@ class ChromeCastController(
             }else if (playerStatus == MediaStatus.PLAYER_STATE_PAUSED){
                 retCode = 3
             }else {
-                retCode = 4 //error or unkonw
+                retCode = 4 //error or unkonwn
             }
             channel.invokeMethod("chromeCast#didPlayerStatusUpdated", retCode)
         }
@@ -180,6 +234,7 @@ class ChromeCastController(
                 setVolume(call.arguments)
                 result.success(null)
             }
+            "chromeCast#getMediaInfo" -> result.success(getMediaInfo())
             "chromeCast#getVolume" -> result.success(getVolume())
             "chromeCast#stop" -> {
                 stop()

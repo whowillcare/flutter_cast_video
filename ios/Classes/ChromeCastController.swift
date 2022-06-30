@@ -67,6 +67,15 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         }
     }
 
+    private func setVolume(args: Any?) {
+            guard
+                 let args = args as? [String: Any],
+                 let volume = args["volume"] as? float,
+      if let client = sessionManager.currentCastSession?.remoteMediaClient {
+        client.setStreamVolume(volume);
+      }
+    }
+
     private func onMethodCall(call: FlutterMethodCall, result: FlutterResult) {
         switch call.method {
         case "chromeCast#wait":
@@ -88,12 +97,19 @@ class ChromeCastController: NSObject, FlutterPlatformView {
             seek(args: call.arguments)
             result(nil)
             break
+        case "chromeCast#setVolume":
+           setVolume(args: call.arguments)
+           result(nil)
+           break
         case "chromeCast#stop":
             stop()
             result(nil)
             break
         case "chromeCast#isConnected":
             result(isConnected())
+            break
+        case "chromeCast#duration":
+            result.success(duration())
             break
         case "chromeCast#isPlaying":
             result(isPlaying())
@@ -189,6 +205,31 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         }
     }
 
+    private func getMediaInfo() -> [String: String]? {
+       return mediaInfoToMap(sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation)
+
+    }
+
+    private func mediaInfoToMap(_mediaInfo: GCKMediaInformation?) : [String,String]? {
+            var info = [String,String]()
+            if let mediaInfo = _mediaInfo {
+                info["id"] = mediaInfo.contentID ?? ""
+                info["contentType"] = mediaInfo.contentType()  ?? ""
+                if let meta = mediaInfo.metadata {
+
+                    info['title'] =  mediaInfo.stringForKey(kGCKMetadataKeyTitle)
+                    info['subtitle'] =  mediaInfo.stringForKey(kGCKMetadataKeySubtitle)
+                    if let imgs = meta.images {
+                               if (imgs.count > 0){
+                                            info["image"] = imgs[0].URL.absoluteString
+                               }
+                    }
+
+                }
+            }
+            return info;
+        }
+
     private func isConnected() -> Bool {
         return sessionManager.currentCastSession?.remoteMediaClient?.connected ?? false
     }
@@ -207,6 +248,10 @@ class ChromeCastController: NSObject, FlutterPlatformView {
 
     private func position() -> Int {        
         return Int(sessionManager.currentCastSession?.remoteMediaClient?.approximateStreamPosition() ?? 0) * 1000
+    }
+
+    private func duration() -> Int {
+            return Int(sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation?.streamDuration ?? 0) * 1000
     }
 
 }

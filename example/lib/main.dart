@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cast_video/flutter_cast_video.dart';
 
@@ -22,9 +24,10 @@ class CastSample extends StatefulWidget {
 }
 
 class _CastSampleState extends State<CastSample> {
-  ChromeCastController _controller;
+  late ChromeCastController _controller;
   AppState _state = AppState.idle;
   bool _playing = false;
+  Map<dynamic,dynamic> _mediaInfo = {};
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +73,11 @@ class _CastSampleState extends State<CastSample> {
   }
 
   Widget _mediaControls() {
-    return Row(
+    return
+    Column(
+     children:[
+
+      Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _RoundIconButton(
@@ -86,13 +93,20 @@ class _CastSampleState extends State<CastSample> {
         _RoundIconButton(
           icon: Icons.forward_10,
           onPressed: () => _controller.seek(relative: true, interval: 10.0),
-        )
+        ),
+
       ],
-    );
+    )
+      ,
+    Text(jsonEncode(_mediaInfo))
+    ]
+    )
+    ;
   }
 
   Future<void> _playPause() async {
     final playing = await _controller.isPlaying();
+    if (playing == null) return;
     if(playing) {
       await _controller.pause();
     } else {
@@ -108,18 +122,26 @@ class _CastSampleState extends State<CastSample> {
 
   Future<void> _onSessionStarted() async {
     setState(() => _state = AppState.connected);
-    await _controller.loadMedia('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+    await _controller.loadMedia('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: "TestTitle",
+      subtitle: "test Sub title",
+      image: "https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"
+    );
   }
 
   Future<void> _onRequestCompleted() async {
     final playing = await _controller.isPlaying();
+    if (playing  == null) return;
+    final mediaInfo = await _controller.getMediaInfo();
     setState(() {
       _state = AppState.mediaLoaded;
       _playing = playing;
+      if (mediaInfo !=null) {
+        _mediaInfo = mediaInfo;
+      }
     });
   }
 
-  Future<void> _onRequestFailed(String error) async {
+  Future<void> _onRequestFailed(String? error) async {
     setState(() => _state = AppState.error);
     print(error);
   }
@@ -130,8 +152,8 @@ class _RoundIconButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   _RoundIconButton({
-    @required this.icon,
-    @required this.onPressed
+    required this.icon,
+    required this.onPressed
   });
 
   @override

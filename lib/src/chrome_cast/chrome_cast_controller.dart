@@ -53,6 +53,11 @@ class ChromeCastController {
   }
 
   /// Get current volume
+  Future<Map<dynamic,dynamic>?> getMediaInfo() {
+    return _chromeCastPlatform.getMediaInfo(id: id);
+  }
+
+  /// Get current volume
   Future<double> getVolume() {
     return _chromeCastPlatform.getVolume(id: id);
   }

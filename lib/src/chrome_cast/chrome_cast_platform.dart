@@ -89,6 +89,11 @@ abstract class ChromeCastPlatform {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
+  /// Get current MediaInfo
+  Future<Map<dynamic,dynamic>?> getMediaInfo({required int id}) {
+    throw UnimplementedError('getVolume() has not been implemented.');
+  }
+
   /// Get volume
   Future<double> getVolume({required int id}) {
     throw UnimplementedError('getVolume() has not been implemented.');

@@ -23,3 +23,8 @@
 ## 1.1.1
 
 * fix ios native code
+
+## 1.2.0
+
+* Add get MediaInfo method
+* add iOS duration function 
