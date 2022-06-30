@@ -127,8 +127,9 @@ class ChromeCastController(
     private fun mediaInfoToMap(mediaInfo: MediaInfo?) : HashMap<String,String>? {
         var info = HashMap<String, String>()
         mediaInfo?.let {
-            info["id"] = mediaInfo.getContentId() ?: ""
-                info["url"] = mediaInfo.getContentUrl() ?: ""
+            var id = mediaInfo.getContentId() ?: ""
+            info["id"] = id
+                info["url"] = mediaInfo.getContentUrl() ?: id
             info["contentType"] = mediaInfo.getContentType()  ?: ""
             // info["customData"] = mediaInfo.getCustomData().toString() ?: ""
             var meta = mediaInfo.getMetadata()
