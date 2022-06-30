@@ -70,10 +70,12 @@ class ChromeCastController: NSObject, FlutterPlatformView {
     private func setVolume(args: Any?) {
             guard
                  let args = args as? [String: Any],
-                 let volume = args["volume"] as? float,
-      if let client = sessionManager.currentCastSession?.remoteMediaClient {
+                 let volume = args["volume"] as? Float,
+                 let client = sessionManager.currentCastSession?.remoteMediaClient else {
+                   return
+                 }
         client.setStreamVolume(volume);
-      }
+
     }
 
     private func onMethodCall(call: FlutterMethodCall, result: FlutterResult) {
@@ -109,13 +111,13 @@ class ChromeCastController: NSObject, FlutterPlatformView {
             result(isConnected())
             break
         case "chromeCast#duration":
-            result.success(duration())
+            result(duration())
             break
         case "chromeCast#isPlaying":
             result(isPlaying())
             break
-        "chromeCast#getMediaInfo":
-            result.success(getMediaInfo())
+        case "chromeCast#getMediaInfo":
+            result(getMediaInfo())
             break
         case "chromeCast#addSessionListener":
             addSessionListener()
@@ -208,24 +210,31 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         }
     }
 
-    private func getMediaInfo() -> [String,String]? {
-       return  mediaInfoToMap(mediaInfoToMap(sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation))
+    private func getMediaInfo() -> [String: String]? {
+       return  mediaInfoToMap(_mediaInfo: sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation)
     }
 
-    private func mediaInfoToMap(_mediaInfo: GCKMediaInformation?) : [String,String]? {
-            var info = [String,String]()
+    private func mediaInfoToMap(_mediaInfo: GCKMediaInformation?) -> [String: String]? {
+            var info = [String: String]()
             if let mediaInfo = _mediaInfo {
-                info["id"] = mediaInfo.contentID ?? ""
-                info["contentType"] = mediaInfo.contentType()  ?? ""
+                info["id"] = mediaInfo.contentID
+                if let u = mediaInfo.contentURL {
+                  info["url"] = u.absoluteString
+                }
+                info["contentType"] = mediaInfo.contentType
                 if let meta = mediaInfo.metadata {
 
-                    info['title'] =  mediaInfo.stringForKey(kGCKMetadataKeyTitle)
-                    info['subtitle'] =  mediaInfo.stringForKey(kGCKMetadataKeySubtitle)
-                    if let imgs = meta.images {
+                    info["title"] =  meta.string(forKey: kGCKMetadataKeyTitle)
+                    info["subtitle"] =  meta.string(forKey: kGCKMetadataKeySubtitle)
+                    let imgs = meta.images()
                                if (imgs.count > 0){
-                                            info["image"] = imgs[0].URL.absoluteString
+                                  if let img = imgs[0] as? GCKImage {
+                                   info["image"] = img.url.absoluteString
+                                  }
+
                                }
-                    }
+
+
 
                 }
             }
