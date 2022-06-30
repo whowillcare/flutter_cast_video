@@ -114,6 +114,9 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         case "chromeCast#isPlaying":
             result(isPlaying())
             break
+        "chromeCast#getMediaInfo":
+            result.success(getMediaInfo())
+            break
         case "chromeCast#addSessionListener":
             addSessionListener()
             result(nil)
@@ -205,9 +208,8 @@ class ChromeCastController: NSObject, FlutterPlatformView {
         }
     }
 
-    private func getMediaInfo() -> [String: String]? {
-       return mediaInfoToMap(sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation)
-
+    private func getMediaInfo() -> [String,String]? {
+       return  mediaInfoToMap(mediaInfoToMap(sessionManager.currentCastSession?.remoteMediaClient?.mediaStatus?.mediaInformation))
     }
 
     private func mediaInfoToMap(_mediaInfo: GCKMediaInformation?) : [String,String]? {

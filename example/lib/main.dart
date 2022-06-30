@@ -1,7 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cast_video/flutter_cast_video.dart';
+
+String duration2String(Duration? dur,{showLive='Live'}){
+ Duration duration = dur ?? Duration();
+  if (duration.inSeconds < 0) return showLive;
+  else {
+    return duration.toString().split('.').first.padLeft(8, "0");
+  }
+}
 
 void main() {
   runApp(MyApp());
@@ -57,21 +66,30 @@ class _CastSampleState extends State<CastSample> {
     );
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    resetTimer();
+  }
+
   Widget _handleState() {
     switch(_state) {
       case AppState.idle:
+        resetTimer();
         return Text('ChromeCast not connected');
       case AppState.connected:
         return Text('No media loaded');
       case AppState.mediaLoaded:
+        startTimer();
         return _mediaControls();
       case AppState.error:
+        resetTimer();
         return Text('An error has occurred');
       default:
         return Container();
     }
   }
-
+  Duration? position, duration;
   Widget _mediaControls() {
     return
     Column(
@@ -98,10 +116,43 @@ class _CastSampleState extends State<CastSample> {
       ],
     )
       ,
+    Text(duration2String(position) + '/' + duration2String(duration)),
     Text(jsonEncode(_mediaInfo))
     ]
     )
     ;
+  }
+
+  Timer? _timer;
+
+  Future<void> _monitor() async {
+    // monitor cast events
+    var dur = await _controller.duration(), pos = await _controller.position();
+    if (duration == null || duration!.inSeconds != dur.inSeconds){
+      setState((){
+        duration = dur;
+      });
+    }
+    if (position == null || position!.inSeconds != pos.inSeconds){
+      setState((){
+        position = pos;
+      });
+    }
+  }
+
+  void resetTimer(){
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void startTimer(){
+    if (_timer?.isActive ?? false){
+      return;
+    }
+    resetTimer();
+    _timer = Timer.periodic(Duration(seconds: 1),(timer){
+      _monitor();
+    });
   }
 
   Future<void> _playPause() async {
@@ -126,6 +177,7 @@ class _CastSampleState extends State<CastSample> {
       subtitle: "test Sub title",
       image: "https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"
     );
+
   }
 
   Future<void> _onRequestCompleted() async {
