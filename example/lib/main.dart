@@ -4,9 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_cast_video/flutter_cast_video.dart';
 
-String duration2String(Duration? dur,{showLive='Live'}){
- Duration duration = dur ?? Duration();
-  if (duration.inSeconds < 0) return showLive;
+String duration2String(Duration? dur, {showLive = 'Live'}) {
+  Duration duration = dur ?? Duration();
+  if (duration.inSeconds < 0)
+    return showLive;
   else {
     return duration.toString().split('.').first.padLeft(8, "0");
   }
@@ -19,9 +20,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: CastSample()
-    );
+    return MaterialApp(home: CastSample());
   }
 }
 
@@ -36,7 +35,7 @@ class _CastSampleState extends State<CastSample> {
   late ChromeCastController _controller;
   AppState _state = AppState.idle;
   bool _playing = false;
-  Map<dynamic,dynamic> _mediaInfo = {};
+  Map<dynamic, dynamic> _mediaInfo = {};
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +43,7 @@ class _CastSampleState extends State<CastSample> {
       appBar: AppBar(
         title: Text('Plugin example app'),
         actions: <Widget>[
+          /*
           AirPlayButton(
             size: CastSample._iconSize,
             color: Colors.white,
@@ -51,6 +51,7 @@ class _CastSampleState extends State<CastSample> {
             onRoutesOpening: () => print('opening'),
             onRoutesClosed: () => print('closed'),
           ),
+          */
           ChromeCastButton(
             size: CastSample._iconSize,
             color: Colors.white,
@@ -67,13 +68,13 @@ class _CastSampleState extends State<CastSample> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     resetTimer();
   }
 
   Widget _handleState() {
-    switch(_state) {
+    switch (_state) {
       case AppState.idle:
         resetTimer();
         return Text('ChromeCast not connected');
@@ -89,38 +90,29 @@ class _CastSampleState extends State<CastSample> {
         return Container();
     }
   }
+
   Duration? position, duration;
   Widget _mediaControls() {
-    return
-    Column(
-     children:[
-
+    return Column(children: [
       Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        _RoundIconButton(
-          icon: Icons.replay_10,
-          onPressed: () => _controller.seek(relative: true, interval: -10.0),
-        ),
-        _RoundIconButton(
-            icon: _playing
-                ? Icons.pause
-                : Icons.play_arrow,
-            onPressed: _playPause
-        ),
-        _RoundIconButton(
-          icon: Icons.forward_10,
-          onPressed: () => _controller.seek(relative: true, interval: 10.0),
-        ),
-
-      ],
-    )
-      ,
-    Text(duration2String(position) + '/' + duration2String(duration)),
-    Text(jsonEncode(_mediaInfo))
-    ]
-    )
-    ;
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _RoundIconButton(
+            icon: Icons.replay_10,
+            onPressed: () => _controller.seek(relative: true, interval: -10.0),
+          ),
+          _RoundIconButton(
+              icon: _playing ? Icons.pause : Icons.play_arrow,
+              onPressed: _playPause),
+          _RoundIconButton(
+            icon: Icons.forward_10,
+            onPressed: () => _controller.seek(relative: true, interval: 10.0),
+          ),
+        ],
+      ),
+      Text(duration2String(position) + '/' + duration2String(duration)),
+      Text(jsonEncode(_mediaInfo))
+    ]);
   }
 
   Timer? _timer;
@@ -128,29 +120,29 @@ class _CastSampleState extends State<CastSample> {
   Future<void> _monitor() async {
     // monitor cast events
     var dur = await _controller.duration(), pos = await _controller.position();
-    if (duration == null || duration!.inSeconds != dur.inSeconds){
-      setState((){
+    if (duration == null || duration!.inSeconds != dur.inSeconds) {
+      setState(() {
         duration = dur;
       });
     }
-    if (position == null || position!.inSeconds != pos.inSeconds){
-      setState((){
+    if (position == null || position!.inSeconds != pos.inSeconds) {
+      setState(() {
         position = pos;
       });
     }
   }
 
-  void resetTimer(){
+  void resetTimer() {
     _timer?.cancel();
     _timer = null;
   }
 
-  void startTimer(){
-    if (_timer?.isActive ?? false){
+  void startTimer() {
+    if (_timer?.isActive ?? false) {
       return;
     }
     resetTimer();
-    _timer = Timer.periodic(Duration(seconds: 1),(timer){
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _monitor();
     });
   }
@@ -158,7 +150,7 @@ class _CastSampleState extends State<CastSample> {
   Future<void> _playPause() async {
     final playing = await _controller.isPlaying();
     if (playing == null) return;
-    if(playing) {
+    if (playing) {
       await _controller.pause();
     } else {
       await _controller.play();
@@ -173,21 +165,22 @@ class _CastSampleState extends State<CastSample> {
 
   Future<void> _onSessionStarted() async {
     setState(() => _state = AppState.connected);
-    await _controller.loadMedia('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', title: "TestTitle",
-      subtitle: "test Sub title",
-      image: "https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg"
-    );
-
+    await _controller.loadMedia(
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        title: "TestTitle",
+        subtitle: "test Sub title",
+        image:
+            "https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg");
   }
 
   Future<void> _onRequestCompleted() async {
     final playing = await _controller.isPlaying();
-    if (playing  == null) return;
+    if (playing == null) return;
     final mediaInfo = await _controller.getMediaInfo();
     setState(() {
       _state = AppState.mediaLoaded;
       _playing = playing;
-      if (mediaInfo !=null) {
+      if (mediaInfo != null) {
         _mediaInfo = mediaInfo;
       }
     });
@@ -203,29 +196,15 @@ class _RoundIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  _RoundIconButton({
-    required this.icon,
-    required this.onPressed
-  });
+  _RoundIconButton({required this.icon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-        child: Icon(
-            icon,
-            color: Colors.white
-        ),
-        padding: EdgeInsets.all(16.0),
-        color: Colors.blue,
-        shape: CircleBorder(),
-        onPressed: onPressed
+    return ElevatedButton(
+      child: Icon(icon, color: Colors.white),
+      onPressed: onPressed,
     );
   }
 }
 
-enum AppState {
-  idle,
-  connected,
-  mediaLoaded,
-  error
-}
+enum AppState { idle, connected, mediaLoaded, error }
