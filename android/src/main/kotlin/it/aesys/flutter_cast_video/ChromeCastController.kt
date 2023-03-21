@@ -1,7 +1,6 @@
 package it.aesys.flutter_cast_video
 
 import android.content.Context
-import android.util.Log
 import android.net.Uri
 import android.view.ContextThemeWrapper
 import androidx.mediarouter.app.MediaRouteButton
@@ -32,7 +31,7 @@ class ChromeCastController(
         context: Context?
 ) : PlatformView, MethodChannel.MethodCallHandler, SessionManagerListener<Session>, PendingResult.StatusListener {
     private val channel = MethodChannel(messenger, "flutter_cast_video/chromeCast_$viewId")
-    private val chromeCastButton = MediaRouteButton(ContextThemeWrapper(context, R.style.Theme_AppCompat_NoActionBar))
+    private val chromeCastButton = MediaRouteButton(ContextThemeWrapper(context, R.style.Theme_AppCompat_DayNight_NoActionBar))
     private val sessionManager = CastContext.getSharedInstance()?.sessionManager
 
     init {
@@ -51,7 +50,7 @@ class ChromeCastController(
 
             val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
 
-            val streamType = if (liveStream != null && liveStream) MediaInfo.STREAM_TYPE_LIVE else MediaInfo.STREAM_TYPE_BUFFERED
+            val streamType = if (liveStream) MediaInfo.STREAM_TYPE_LIVE else MediaInfo.STREAM_TYPE_BUFFERED
 
             movieMetadata.putString(MediaMetadata.KEY_TITLE, title)
             movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, subtitle)
@@ -125,20 +124,19 @@ class ChromeCastController(
     }
 
     private fun mediaInfoToMap(mediaInfo: MediaInfo?) : HashMap<String,String>? {
-        var info = HashMap<String, String>()
+        val info = HashMap<String, String>()
         mediaInfo?.let {
-            var id = mediaInfo.getContentId() ?: ""
+            val id = mediaInfo.contentId ?: ""
             info["id"] = id
-                info["url"] = mediaInfo.getContentUrl() ?: id
-            info["contentType"] = mediaInfo.getContentType()  ?: ""
-            // info["customData"] = mediaInfo.getCustomData().toString() ?: ""
-            var meta = mediaInfo.getMetadata()
-            meta?.let {
-                info["title"] = meta.getString(MediaMetadata.KEY_TITLE) ?: ""
-                info["subtitle"] = meta.getString(MediaMetadata.KEY_SUBTITLE) ?: ""
-                val imgs = meta.getImages()
+                info["url"] = mediaInfo.contentUrl ?: id
+            info["contentType"] = mediaInfo.contentType ?: ""
+
+            mediaInfo.metadata?.let {
+                info["title"] = it.getString(MediaMetadata.KEY_TITLE) ?: ""
+                info["subtitle"] = it.getString(MediaMetadata.KEY_SUBTITLE) ?: ""
+                val imgs = it.images
                 if (imgs.size > 0){
-                    info["image"] = imgs[0].getUrl().toString();
+                    info["image"] = imgs[0].url.toString();
                 }
             }
         }
@@ -199,7 +197,7 @@ class ChromeCastController(
             channel.invokeMethod("chromeCast#didPlayerStatusUpdated", retCode)
         }
         override fun onMediaError(mediaError: MediaError){
-            var errorCode: Int = mediaError.getDetailedErrorCode() ?: 100
+            val errorCode: Int = mediaError.detailedErrorCode ?: 100
             channel.invokeMethod("chromeCast#didPlayerStatusUpdated", errorCode)
         }
     }
@@ -304,7 +302,7 @@ class ChromeCastController(
     // PendingResult.StatusListener
 
     override fun onComplete(status: Status) {
-        if (status.isSuccess == true) {
+        if (status.isSuccess) {
             channel.invokeMethod("chromeCast#requestDidComplete", null)
         }
     }
