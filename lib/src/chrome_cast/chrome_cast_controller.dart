@@ -25,9 +25,18 @@ class ChromeCastController {
     return _chromeCastPlatform.removeSessionListener(id: id);
   }
 
-  /// Load a new media by providing an [url].
-  Future<void> loadMedia(String url, {String title = '', String subtitle = '', String image = '', bool? live}) {
-    return _chromeCastPlatform.loadMedia(url, title, subtitle, image, id: id,live: live);
+  /// Load a new media by providing an [url],
+  /// optionally [title], [subtitle], [image], [contentType]
+  /// and whether the media is currently [live].
+  ///
+  Future<void> loadMedia(String url,
+      {String title = '',
+      String subtitle = '',
+      String image = '',
+      bool? live,
+      String? contentType}) {
+    return _chromeCastPlatform.loadMedia(url, title, subtitle, image,
+        id: id, live: live, contentType: contentType);
   }
 
   /// Plays the video playback.
@@ -53,7 +62,7 @@ class ChromeCastController {
   }
 
   /// Get current volume
-  Future<Map<dynamic,dynamic>?> getMediaInfo() {
+  Future<Map<dynamic, dynamic>?> getMediaInfo() {
     return _chromeCastPlatform.getMediaInfo(id: id);
   }
 
