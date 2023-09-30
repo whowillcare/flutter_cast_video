@@ -42,6 +42,8 @@ import GoogleCast
 Opt-in to the embedded views preview by adding a boolean property to the app's `Info.plist` file
 with the key `io.flutter.embedded_views_preview` and the value `YES`.
 
+Add NSBonjourServices to your Info.plist as specified in the [Cast docs](https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery).
+
 ### Android
 
 Add dependencies in your module (app-level) Gradle file (usually `android/app/build.gradle`):
