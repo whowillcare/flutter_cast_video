@@ -47,8 +47,8 @@ with the key `io.flutter.embedded_views_preview` and the value `YES`.
 Add dependencies in your module (app-level) Gradle file (usually `android/app/build.gradle`):
 
 ```groovy
-implementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
-implementation 'com.google.android.exoplayer:extension-cast:2.11.5'
+  implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
+  implementation 'com.google.android.exoplayer:extension-cast:2.19.1'
 ```
 
 Set the theme of the MainActivity to `@style/Theme.AppCompat.NoActionBar` in the application manifest `android/app/src/main/AndroidManifest.xml`:
