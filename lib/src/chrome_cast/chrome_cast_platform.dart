@@ -52,17 +52,19 @@ abstract class ChromeCastPlatform {
 
   /// Player status updated.
   Stream<PlayerStatusDidUpdatedEvent> onPlayerStatusUpdated({required int id}) {
-    throw UnimplementedError('onPlayerStatusUpdated() has not been implemented.');
+    throw UnimplementedError(
+        'onPlayerStatusUpdated() has not been implemented.');
   }
 
   /// Load a new media by providing an [url].
   Future<void> loadMedia(
-    String url, 
-    String title, 
-    String subtitle, 
+    String url,
+    String title,
+    String subtitle,
     String image, {
-    bool? live,  
+    bool? live,
     required int id,
+    String? contentType,
   }) {
     throw UnimplementedError('loadMedia() has not been implemented.');
   }
@@ -90,7 +92,7 @@ abstract class ChromeCastPlatform {
   }
 
   /// Get current MediaInfo
-  Future<Map<dynamic,dynamic>?> getMediaInfo({required int id}) {
+  Future<Map<dynamic, dynamic>?> getMediaInfo({required int id}) {
     throw UnimplementedError('getVolume() has not been implemented.');
   }
 
@@ -113,7 +115,6 @@ abstract class ChromeCastPlatform {
   Future<void> endSession({required int id}) {
     throw UnimplementedError('seek() has not been implemented.');
   }
-
 
   /// Returns `true` when a cast session is playing, `false` otherwise.
   Future<bool?> isPlaying({required int id}) {
